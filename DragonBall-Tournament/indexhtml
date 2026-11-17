@@ -1,0 +1,359 @@
+<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dragon Ball · Турнир Земли</title><style>
+*{box-sizing:border-box}body{margin:0;background:#10141d;color:#f8f5ee;font:16px system-ui}header,main{max-width:1120px;margin:auto;padding:20px}header{display:flex;justify-content:space-between;font-weight:900;color:#ffad6a}.hero{min-height:230px;padding:36px;border-radius:18px;background:radial-gradient(circle at 85% 35%,#ff9d51 0 11%,transparent 11.3%),linear-gradient(145deg,#282031 55%,#7f3832);border:1px solid #70443c}h1{font-size:clamp(32px,7vw,64px);margin:8px 0}.grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-top:16px}section{background:#1b2331;border:1px solid #354052;border-radius:14px;padding:20px}button,input{font:inherit;border-radius:8px;padding:9px 12px;border:1px solid #495568}button{background:#ffab65;color:#20130d;font-weight:750;cursor:pointer}button:disabled{opacity:.45;cursor:default}input{background:#111823;color:white}small,p{color:#ccd2de}.row{display:flex;gap:8px;flex-wrap:wrap}.fighter{padding:12px;border-bottom:1px solid #354052;display:flex;align-items:center;justify-content:space-between;gap:8px}#error{color:#ffaf9f}progress{width:100%;accent-color:#ffad6a}@media(max-width:680px){.grid{grid-template-columns:1fr}}
+</style><style>#loading{position:fixed;inset:0;z-index:10;background:#000;display:grid;place-items:center}#loading[hidden]{display:none}.splash{width:min(100vw,193.01vh);position:relative;aspect-ratio:1326/687}.splash img{display:block;width:100%;height:100%}.meter{position:absolute;left:35.4%;width:28.6%;height:4%;border:2px solid #a58a4c;border-radius:10px;background:#25221d;overflow:hidden;text-align:center;color:white;font:700 clamp(7px,1vw,13px)/1.15 system-ui}.meter:first-of-type{top:82%}.meter:nth-of-type(2){top:81.75%}.meter i{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(#8eeaff,#0786af);transition:width .23s}.meter span{position:relative;text-shadow:0 1px 3px black,0 0 3px black}</style><div id="loading" role="status" aria-label="Загрузка игры"><div class="splash"><img id="splash-art" src="/loading-classic.png" alt="Гоку сражается с Вегетой"><div class="meter"><i></i><span></span></div></div></div><style>
+.grid>section:first-child{grid-column:1/-1;padding:0;overflow:hidden}.grid>section:first-child>h2{display:none}#arena{background:#11273d}.field{position:relative;min-height:340px;overflow:hidden;isolation:isolate;background:radial-gradient(ellipse at 20% 95%,#c8a75a 0,transparent 45%),linear-gradient(#209bd4,#c9f3ed 42%,#0babc7 43%,#20c5cb 63%,#f1d785 64%,#e9bd62)}.round{position:relative;z-index:2;margin:auto;width:max-content;max-width:100%;padding:8px 24px;background:#12374b;color:#fff0b3;border:2px solid #be9959;border-radius:0 0 16px 16px;font-weight:bold}.island{position:absolute;right:10%;top:39%;width:33%;height:12%;background:#a3bf50;border-radius:50%;box-shadow:0 6px #e9d189}.house{position:absolute;bottom:40%;left:35%;background:#e9a4bc;color:#6e304f;padding:8px;font:bold clamp(8px,1vw,13px) system-ui;transform:rotate(-4deg);border-bottom:6px solid #b77299}.house:before{content:'';position:absolute;bottom:100%;left:-14%;width:128%;height:30px;background:#753e71;clip-path:polygon(50% 0,100% 100%,0 100%)}.palm{position:absolute;font-size:clamp(48px,11vw,136px);left:2%;top:3%;filter:drop-shadow(4px 4px 0 #205e5350)}.palm.right{left:auto;right:8%;top:16%;font-size:clamp(30px,7vw,88px)}.formations{position:relative;display:flex;justify-content:space-between;align-items:end;gap:12px;padding:130px 3% 30px}.squad{display:flex;align-items:end;gap:5px;flex-wrap:wrap;width:44%}.squad:last-child{justify-content:flex-end}.unit{background:#172e40eb;color:#fff;border:1px solid #769c9e;border-radius:8px;padding:6px;width:clamp(68px,11vw,117px);text-align:center;font-size:clamp(10px,1.4vw,15px);box-shadow:0 5px 8px #50381e55}.unit.selected{outline:2px solid #f8e27d}.unit.out{opacity:.45}.unit b{display:block;font-size:24px}.unit progress{height:8px;display:block;accent-color:#38cbe3}.battle-controls{padding:12px 16px;text-align:center}.battle-controls p{margin:0 0 8px}.battle-controls .row{justify-content:center}
+</style><style>.cutin{position:absolute;inset:0;z-index:4;display:grid;align-items:end;pointer-events:none;animation:cut-in .28s ease-out both}.cutin-title{position:absolute;inset:auto 0 15%;background:#092539ed;border-block:2px solid #5dd1ed;padding:16px 44% 16px 5%;font-size:clamp(20px,4vw,42px);font-weight:900;color:#fff;text-shadow:0 2px #092539}.cutin-title small{display:block;font-size:.42em;color:#aef0ff}.cutin-art{position:absolute;right:4%;bottom:5%;width:34%;height:88%;border:2px solid #a9eaff;border-radius:24px;background:radial-gradient(#269ac3,#0b314d);box-shadow:0 0 28px #36caff;background-repeat:no-repeat}.cutin-art.goku,.cutin-art.vegeta{background-image:url('/loading-classic.png');background-size:auto 145%}.cutin-art.goku{background-position:63% top}.cutin-art.vegeta{background-position:37% 52%}.cutin-art.symbol{display:grid;place-items:center;font-size:clamp(40px,12vw,125px);color:#baf3ff}@keyframes cut-in{from{opacity:0;transform:translateX(6%)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){.cutin{animation:none}}</style><header><span>DRAGON BALL</span><span id="online"></span></header><main><p id="error" role="status"></p><style>#avatars{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin:12px 0}#avatars label{display:grid;justify-items:center;padding:8px;border:2px solid #556879;border-radius:10px;text-align:center;cursor:pointer}#avatars label:has(:checked){border-color:#ffad65;background:#263947}#avatars svg{width:72px;height:96px}#village-avatar{position:absolute;right:15%;bottom:7%;width:82px}#stats svg{width:48px;float:left;margin-right:8px}</style><form id="login" class="creation"><div class="creation-title"><h1 id="race-title"></h1><p id="race-desc"></p></div><div class="creation-main"><div id="gender-select"><button type="button" data-gender="male">Мужской</button><button type="button" data-gender="female">Женский</button></div><div id="avatars" role="group" aria-label="Раса"></div><div id="hero-preview" aria-hidden="true"></div></div><div class="creation-footer"><label for="name">Имя героя</label><input id="name" required maxlength="24"><button>Начать</button></div></form><div id="game" hidden><section id="village"><div class="village-hud" id="village-hud"></div><button id="village-map">Карта</button><nav id="village-dock" aria-label="Меню игры"><button id="team-open">Отряд</button><button id="bag-open">Сумка</button></nav><div id="village-avatar"></div><h2>Деревня новичков</h2><div class="village-quest"><strong>Мастер Роши</strong><p id="quest-name"></p><button id="quest-start">Начать тренировку</button></div></section><div class="grid"><section><h2>Арена</h2><div id="arena"></div></section><section><h2>Игроки в сети</h2><div id="players"></div><h2>Прогресс</h2><div id="stats"></div></section><section id="collection"><h2>Коллекция</h2><p>Выбери до трёх бойцов. В бою они ходят по очереди.</p><div id="roster"></div><button id="summon">Призыв · 100 дзени</button></section></div></div><button id="gear-open" hidden>Команда и снаряжение</button></main><style>#village .village-hud{display:grid;grid-template-columns:clamp(44px,7vw,83px) minmax(0,1fr);align-items:center;gap:4px;width:min(360px,73vw);min-height:0;padding:3px;border:3px double #d99657;background:#241911;color:#ffda94}.village-hud>.anime-hero{width:100%;height:clamp(56px,8vw,92px);border:2px solid #d9aa6c;border-radius:12px;background-color:#323a4a}.profile-readout{min-width:0}.profile-top,.profile-vitality,.profile-bp{display:flex;justify-content:space-between;align-items:center;gap:5px;padding:3px 6px;line-height:1.15;border:1px solid #b18553}.profile-top{background:linear-gradient(#8c3c26,#4a1d15);border-radius:0 12px 0 0}.profile-top span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.profile-vitality{background:#ac997a;color:#281e17;font-size:.85em}.profile-meter{position:relative;flex:1;min-width:30px}.profile-meter progress{display:block;height:12px;appearance:none;border:1px solid #ead7b0;background:#253643;border-radius:8px}.profile-meter progress::-webkit-progress-bar{background:#263744;border-radius:8px}.profile-meter progress::-webkit-progress-value{background:linear-gradient(#8df5ff,#279ed6);border-radius:8px}.profile-meter span{position:absolute;inset:0;text-align:center;color:white;font-size:10px;text-shadow:0 1px 2px black}.profile-bp{background:linear-gradient(#364858,#192b3a)}.profile-money{font-size:.76em;padding:2px 6px}</style><style>.classic-fighter{background-image:url('/loading-classic.png');background-size:auto 158%;background-repeat:no-repeat;border-radius:22% 22% 14% 14%;max-width:88px}.classic-fighter.goku{background-position:61% 3%}.classic-fighter.vegeta{background-position:36% 52%}</style><style>
+#game .formations{align-items:flex-end;isolation:isolate}#game .squad{flex-wrap:nowrap}#game .squad .unit{display:flex;min-width:0;flex:1;max-width:125px;flex-direction:column;align-items:center;border:0;outline:0;background:none;box-shadow:none;padding:0 2px;color:white;text-shadow:1px 2px 3px #050b14;font-weight:800}#game .unit span:not(.battle-sprite):not(.anime-hero){overflow-wrap:anywhere}#game .unit progress{width:80%;height:8px;appearance:none;border:0;border-radius:6px;background:#162232}#game .unit progress::-webkit-progress-bar{background:#162232;border-radius:6px}#game .unit progress::-webkit-progress-value{background:#42d6ed;border-radius:6px}#game .unit.selected progress{outline:2px solid #ffe272}.battle-sprite{position:relative;display:grid;place-items:end center;width:100%;height:clamp(60px,15vw,165px);font-size:clamp(28px,6vw,65px);filter:drop-shadow(2px 4px 2px #15271988);z-index:2}.battle-sprite .anime-hero{width:100%;height:100%}.unit[data-side=enemy] .anime-hero{transform:scaleX(-1)}.unit.out .battle-sprite{visibility:hidden}.cutin-art .anime-hero{width:100%;height:100%}
+</style><style>
+#village{background-size:cover;background-position:center 68%}
+#game .field{background:#548e92 url('/kame-beach.png') center 72%/cover no-repeat}
+#game .field.valley{background-image:url('/green-valley.png')}
+#game .field .palm,#game .field .island{display:none}
+</style><style>
+.creation{width:100%;min-height:min(640px,84vh);background:#07304a url('/character-select.png') center/cover;border:1px solid #3685ac;overflow:hidden;display:grid;grid-template-rows:auto 1fr auto;padding:22px clamp(12px,3vw,38px);gap:15px}.creation[hidden]{display:none}.creation-title h1{font:italic 900 clamp(29px,5vw,58px)/1 system-ui;margin:0;text-shadow:2px 3px #226bc4}.creation-title p{color:#d9f4ff;margin:7px 0}.creation-main{display:grid;grid-template-columns:auto minmax(0,1.9fr) minmax(0,1fr);align-items:center;gap:12px}.creation #avatars{gap:6px;margin:0}.creation #avatars button{padding:3px;color:white;border:2px solid #216d8e;background:#092640a8;transform:skewX(7deg);overflow:hidden}.creation #avatars button[aria-pressed=true]{border-color:#ffd980;background:#105477;box-shadow:0 0 20px #55d4ff99}.creation #avatars strong{display:block;transform:skewX(-7deg);font-size:clamp(9px,1.2vw,15px);padding:6px 0}.creation #avatars .anime-hero{height:auto;aspect-ratio:1/2.3;transform:skewX(-7deg)}#gender-select{display:grid;gap:10px}#gender-select button{font-style:italic;background:#0a253c;color:#8be8fc}#gender-select button[aria-pressed=true]{background:#8b2168;color:white;border-color:#f6c176}#hero-preview .anime-hero{height:auto;aspect-ratio:1/1.7;filter:drop-shadow(0 0 20px #40cafa)}.creation-footer{display:flex;align-items:center;flex-wrap:wrap;gap:8px;color:#79e6ff}.creation-footer button{background:linear-gradient(#ffea8c,#f3a321)}.creation:has(#name[hidden]) label{display:none}@media(max-width:650px){.creation-main{grid-template-columns:1fr}.creation #avatars button{transform:none}#gender-select{display:flex}#hero-preview{display:none}}
+</style><style>#village #roshi-interact{top:51%;left:76%;display:grid;justify-items:center;gap:3px;background:none;border:0;text-shadow:0 2px 3px #000;box-shadow:none}.roshi-portrait{width:clamp(40px,7vw,84px);aspect-ratio:1;background:url('/roshi.png') 20% 24%/490% auto;border-radius:50%;border:2px solid #e9b15b;box-shadow:0 3px 8px #0008}#roshi-interact>span:last-child{background:#102b39e8;padding:3px 6px;border-radius:5px}</style><style>#village #village-avatar{transform:translateX(-50%);pointer-events:none;transition:left .42s linear,bottom .42s linear;z-index:1}#roshi-interact{position:absolute;left:76%;top:45%;transform:translateX(-50%);z-index:2;padding:3px 8px;background:#18313ce8;color:#ffdf85;border:1px solid #d09a56;font-size:clamp(10px,1.15vw,16px)}@media(prefers-reduced-motion:reduce){#village #village-avatar{transition:none}}</style><dialog id="formation" class="db-panel"><h2>Отряд</h2><div class="formation-layout"><div id="formation-roster"></div><div id="formation-field"></div></div><form method="dialog"><button>Закрыть</button></form></dialog>
+<style>
+body.in-world{overflow:hidden}body.in-world>header{display:none}body.in-world main{padding:0;max-width:none}#game{position:relative}#village{height:100dvh;margin:0;padding:0;border:0;border-radius:0;background:#163545 url('/capsule-plaza.png') center 68%/cover no-repeat}#village h2{position:absolute;top:20%;left:42%;color:#fff0b0;text-shadow:1px 2px 4px black;font-size:clamp(14px,2vw,29px);margin:0}#village-avatar{left:15%;right:auto;bottom:24%;width:clamp(52px,8vw,118px)}#village-avatar .anime-hero{width:100%;height:auto;aspect-ratio:2/3;filter:drop-shadow(2px 4px 4px #283521)}.village-hud,.village-quest,#village-dock{background:linear-gradient(#30566b,#132837);border:2px solid #c89053;color:#fff2c9;box-shadow:0 2px 6px #12212b}.village-hud{position:absolute;top:0;left:0;width:28%;min-height:19%;padding:9px;border-radius:0 0 15px 0;font-size:clamp(10px,1.3vw,18px)}.village-hud .anime-hero{float:left;width:25%;height:clamp(40px,8vw,105px)}.village-hud strong,.village-hud small{display:block}.village-quest{position:absolute;top:24%;right:0;width:min(270px,33%);padding:8px;font-size:clamp(10px,1.23vw,16px)}.village-quest button,#village-dock button{background:linear-gradient(#ffe68b,#e79829)}#village-map{position:absolute;right:0;top:0;width:clamp(55px,9vw,125px);aspect-ratio:1;border-radius:50%;border:3px solid #dba061;background:radial-gradient(#4196ad,#153d50);color:white}#village-dock{position:absolute;right:0;bottom:0;padding:5px;display:flex;gap:5px}body.in-world #error{position:absolute;z-index:3;bottom:0;left:0;background:#172f40;padding:5px;margin:0}#error:empty{display:none}#game>.grid{display:block;margin:0}#game>.grid>section:not(:first-child){display:none}body.in-world #gear-open{display:none}#game .field{min-height:calc(100dvh - 125px)}#game .formations{position:absolute;inset:auto 0 10%;padding:0 5%}.formation-layout{display:grid;grid-template-columns:minmax(120px,27%) 1fr;gap:8px}#formation-field{position:relative;min-height:330px;border:3px double #cd9258;border-radius:8px;background:radial-gradient(ellipse at top,#a5ced9,#e7d8af 48%,#a79373)}#formation-field strong{position:absolute;top:8px;left:12px;color:#38291e}.formation-pad{position:absolute;transform:translate(-50%,-50%);border-radius:50%;width:22%;height:17%;display:grid;place-items:center;border:3px double #fff1af;box-shadow:0 4px #746052;color:#231808;font-weight:bold;font-size:clamp(9px,1.3vw,16px)}.formation-pad.empty{opacity:.62}
+</style><style>.anime-hero{display:block;width:100%;height:130px;background:url('/heroes.png') var(--hero-x) var(--hero-y)/400% 200% no-repeat}.avatar-option,.anime-hero{min-width:0}#avatars{grid-template-columns:repeat(4,minmax(0,1fr))}#avatars .anime-hero{height:auto;aspect-ratio:3/4}#stats .anime-hero{width:70px;float:left}#village-avatar .anime-hero,#gear-avatar .anime-hero{width:130px;height:170px}.field.valley{background:linear-gradient(transparent,#326a2633),url('/green-valley.png') center/cover}.valley .palm,.valley .island{display:none}.world-art{width:100%;aspect-ratio:2/1;background:url('/world.png') center/cover;display:grid;justify-items:end;align-items:end;padding:18px}.bulma-portrait{min-height:65px;background:url('/bulma.png') 13% 54%/500% auto no-repeat}#scene-art{display:block;height:160px;max-width:155px}.scene-dialogue{font-size:1.1rem}</style>
+<dialog id="map-dialog" class="db-panel"><h2 id="map-title">Карта мира</h2><div id="map-body"></div><form method="dialog"><button>Закрыть</button></form></dialog>
+<style>.chapter-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}.chapter-cards>*{min-height:125px;margin:0}.current-chapter{border:2px solid #ffd581;box-shadow:0 0 15px #eb9c45}.recruit-preview{min-height:60px;padding-left:80px;background:#1b3246 url('/bulma.png') left 56%/240px auto no-repeat}.db-panel#scene-dialog{width:min(920px,94vw);background:linear-gradient(transparent 22%,#061c21ee 58%),url('/green-valley.png') center/cover}.db-panel#scene-dialog h2{text-shadow:0 2px 8px #081421}.db-panel#scene-dialog #scene-art{height:190px;margin-bottom:4px}</style><dialog id="scene-dialog" class="db-panel"><h2>Дело в долине</h2><div id="scene-art"></div><strong id="scene-speaker"></strong><p id="scene-line" class="scene-dialogue"></p><button id="scene-next">Далее</button><form method="dialog"><button>Назад</button></form></dialog>
+<style>.db-panel{width:min(740px,94vw);max-height:92vh;background:radial-gradient(ellipse at top,#28628a,#0b2035 75%);color:#fff2d8;border:3px solid #ef9a39;border-radius:15px;padding:20px}.db-panel::backdrop{background:#071827cc}.db-panel h2{color:#ffd478;font:bold italic clamp(25px,6vw,42px) Georgia;margin:0}.db-columns{display:grid;grid-template-columns:1fr 1.4fr;gap:14px}.db-box{padding:9px;margin:6px 0;border:1px solid #507a92;border-radius:8px;background:#172f49}.db-box button{margin-left:8px}.db-panel img{display:block;max-width:100%;margin:auto}.db-panel svg{width:100px}.db-roshi{min-height:220px;background:url('/roshi.png') 7% 62%/300% auto no-repeat;border-radius:10px}@media(max-width:580px){.db-columns{grid-template-columns:1fr}.db-roshi{min-height:150px}}</style>
+<dialog id="journal" class="db-panel" aria-labelledby="journal-title"><div class="db-columns"><div class="db-roshi" role="img" aria-label="Мутэн Роши"></div><div><small>МУТЭН РОШИ</small><h2 id="journal-title"></h2><p id="journal-text"></p><p id="journal-pay"></p><div id="journal-loot"></div><button id="journal-action"></button></div></div><form method="dialog"><button>Закрыть</button></form></dialog>
+<dialog id="gear" class="db-panel" aria-labelledby="gear-title"><h2 id="gear-title">Информация о команде</h2><div id="gear-load" hidden><img id="gear-image" alt="Гоку на Летающем Нимбе"><progress aria-label="Загрузка инвентаря"></progress></div><div id="gear-content"><div class="db-columns"><div><div id="gear-avatar"></div><strong id="gear-stats"></strong><div id="gear-slots"></div></div><div><h3>Сумка</h3><div id="gear-bag"></div></div></div><p id="gear-status" role="status"></p></div><form method="dialog"><button>Закрыть</button></form></dialog><style>#village{position:relative;overflow:hidden;min-height:290px;margin-top:16px;background:linear-gradient(#64c8e8 0 42%,#7ead61 42% 58%,#e0c9a1 58%);color:#142632}.village-house{position:absolute;right:7%;bottom:32%;width:31%;height:46%;border-radius:55% 55% 10% 10%;background:#efe5cd;box-shadow:inset -22px -10px #c5b99c;display:grid;place-items:center;text-align:center;font-weight:bold}.village-house:after{content:'';position:absolute;bottom:0;width:24%;height:42%;border-radius:45% 45% 0 0;background:#658aa7}.village-quest{position:relative;width:min(340px,65%);background:#123045;color:white;padding:14px;border:2px solid #dba765;border-radius:10px}.village-quest p{margin:5px 0 12px}#victory-dialog{background:#233a49;color:white;border:3px double #e29a53;border-radius:10px;text-align:center;padding:22px;width:min(410px,90vw)}#victory-dialog h2{color:#ffd166;font:italic bold 42px Georgia;margin:0}#victory-dialog::backdrop{background:#07121c88}</style><dialog id="victory-dialog" aria-labelledby="victory-title"><h2 id="victory-title">Победа</h2><p>Квест завершён. Выбери карту, чтобы получить опыт и дзени.</p><button id="victory-ok">Подтвердить</button></dialog><style>#reward-dialog{width:min(610px,94vw);background:radial-gradient(ellipse at bottom,#123c60,#0a1624);border:2px solid #426994;border-radius:16px;color:#fff;text-align:center;padding:26px 12px}#reward-dialog::backdrop{background:#040e17dd}#reward-title{font:bold italic clamp(30px,6vw,63px)/1 Georgia;color:#ffd166;text-shadow:0 0 18px #d85522;margin:8px}#reward-stars{color:#ffc646;font-size:36px;margin:12px}#reward-cards{display:flex;justify-content:center;gap:8px;margin:16px 0}.reward-card{display:grid;place-items:center;width:30%;min-height:clamp(95px,24vw,160px);padding:6px;border:2px solid #5398c7;border-radius:8px;background:radial-gradient(#408cd4,#172b53);color:#e2f4ff}.reward-card.revealed{background:linear-gradient(#a46549,#4c302d)}.reward-card.picked{border-color:#ffd166;box-shadow:0 0 16px #ec9e4b}</style><dialog id="reward-dialog" aria-labelledby="reward-title"><h2 id="reward-title"></h2><div id="reward-stars" aria-label="Оценка боя"></div><div id="reward-cards"></div><button id="reward-back">Вернуться в деревню</button></dialog><script>
+const el=id=>document.getElementById(id);
+let token=localStorage.getItem('db-token'),busy=false,state,target=0;
+async function request(action,data={}){
+ const res=await fetch('/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,token,...data})});
+ const result=await res.json();if(!res.ok)throw Error(result.error);return result;
+}
+async function act(action,data={}){
+ if(busy)return;busy=true;
+ try{const next=await request(action,data);if(next.effect)await playAttack(next.effect);state=next;if(action==='accept'&&next.player.turtleReturned&&!next.player.bulmaJoined)openJournal('continue');if(state.token){token=state.token;localStorage.setItem('db-token',token)}el('error').textContent='';render();if(next.payout)el('error').textContent=(next.payout.recruit?'Бульма присоединилась! ':'')+'Получено: '+next.payout.silver+' серебра, '+next.payout.xp+' опыта, +'+next.payout.bp+' BP'+(next.payout.items.length?' и снаряжение':'')}
+ catch(e){el('error').textContent=e.message;if(el('gear').open)el('gear-status').textContent=e.message;if(action==='state'&&e.message==='Войди в игру'){token=null;localStorage.removeItem('db-token');el('login').hidden=false;el('game').hidden=true}}
+ finally{busy=false}
+}
+function button(parent,label,action,data,disabled=false){const b=document.createElement('button');b.textContent=label;b.disabled=disabled;b.onclick=()=>act(action,data);parent.append(b)}
+function showSkill(event){
+ const field=el('arena').querySelector('.field');
+ const cut=document.createElement('div');cut.className='cutin';cut.setAttribute('role','status');
+ const title=document.createElement('div');title.className='cutin-title';
+ const name=document.createElement('small');name.textContent=event.name;
+ title.append(name,document.createTextNode(event.skill));
+ const art=document.createElement('div');if(event.avatar){art.className='cutin-art';art.innerHTML=sprite(event.avatar.race,event.avatar.gender);cut.append(title,art);field.append(cut);return}const portrait=event.id===0?'goku':event.id===4?'vegeta':'symbol';
+ art.className='cutin-art '+portrait;art.setAttribute('aria-hidden','true');
+ if(portrait==='symbol')art.textContent='✦';
+ cut.append(title,art);field.append(cut);
+}
+
+let rewardClosed, confirmedVictory;
+function renderReward(b){
+ const dialog=el('reward-dialog'),r=b?.reward;
+ if(!r||rewardClosed===state.player.wins)return;
+ const victory=el('victory-dialog');
+ if(r.pick===null&&confirmedVictory!==state.player.wins){
+  el('victory-ok').onclick=()=>{confirmedVictory=state.player.wins;victory.close();renderReward(b)};
+  victory.oncancel=e=>e.preventDefault();
+  if(!victory.open)victory.showModal();
+  return;
+ }
+ el('reward-title').textContent=r.stars===5?'Идеальное завершение':'Квест завершён';
+ el('reward-stars').textContent='★'.repeat(r.stars)+'☆'.repeat(5-r.stars);
+ const cards=el('reward-cards');cards.replaceChildren();
+ for(let i=0;i<3;i++){
+  const card=document.createElement(r.cards?'div':'button');card.className='reward-card';
+  if(r.cards){
+   const value=r.cards[i];card.classList.add('revealed');
+   card.textContent=value.xp+' опыта · '+value.coins+' дзени';
+   if(i===r.pick){card.classList.add('picked');card.textContent='Получено: '+card.textContent}
+  }else{card.textContent='✦ Открыть';card.setAttribute('aria-label','Открыть карту '+(i+1));card.onclick=()=>act('reward',{id:i})}
+  cards.append(card);
+ }
+ const back=el('reward-back');back.hidden=r.pick===null;
+ back.onclick=()=>{rewardClosed=state.player.wins;dialog.close();render();el('quest-start').focus()};
+ dialog.oncancel=e=>{e.preventDefault();if(r.pick!==null)back.click()};
+ if(!dialog.open)dialog.showModal();
+ if(!back.hidden)back.focus();
+}
+
+const plaza=el('village');
+const walker=el('village-avatar');
+const roshi=document.createElement('button');
+roshi.id='roshi-interact';roshi.innerHTML='<span class="roshi-portrait" aria-hidden="true"></span><span>Мастер Роши</span>';roshi.onclick=()=>el('quest-start').click();plaza.append(roshi);
+plaza.addEventListener('click',event=>{
+ if(event.target.closest('button,nav,.village-hud,.village-quest'))return;
+ const bounds=plaza.getBoundingClientRect();
+ const x=(event.clientX-bounds.left)/bounds.width*100;
+ const y=(event.clientY-bounds.top)/bounds.height*100;
+ if(y<55||y>89)return;
+ walker.style.left=Math.max(4,Math.min(94,x))+'%';
+ walker.style.bottom=100-y+'%';
+});
+const combos={
+ 'earth:male':[[-12,0],[0,0],[-9,-12]],
+ 'earth:female':[[-18,-12],[-7,0],[0,-8]],
+ 'saiyan:male':[[-23,0],[-5,-16],[0,0]],
+ 'saiyan:female':[[-20,-18],[-4,-28],[0,0]],
+ 'majin:male':[[-45,0],[-35,4],[-19,-8]],
+ 'majin:female':[[-38,-13],[-29,5],[-12,-14]],
+ 'frieza:male':[[-28,0],[-8,-10],[-19,0]],
+ 'frieza:female':[[-24,-26],[-16,-19],[-5,-4]]
+};
+const kiColors={earth:'#38cafa',saiyan:'#ffce43',majin:'#ff65c9',frieza:'#af73ff'};
+async function playAttack(effect){
+ const actor=document.querySelector('[data-side=ally][data-unit="'+effect.actor+'"] .battle-sprite');
+ const target=document.querySelector('[data-side=enemy][data-unit="'+effect.target+'"] .battle-sprite');
+ if(!actor||!target||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ if(effect.kind==='skill'){
+  showSkill(effect);
+  await new Promise(resolve=>setTimeout(resolve,1050));
+  document.querySelector('.cutin')?.remove();
+  const color=kiColors[effect.avatar?.race]??'#77dfff';
+  await target.animate([{filter:'none'},{filter:'brightness(3) drop-shadow(0 0 24px '+color+')',transform:'translateX(10px)'},{filter:'none'}],{duration:420}).finished;
+  return;
+ }
+ const a=actor.getBoundingClientRect(),t=target.getBoundingClientRect(),dx=t.left-a.left-a.width*.48,dy=t.top-a.top;
+ const sequence=combos[effect.avatar?.race+':'+effect.avatar?.gender]??combos['earth:male'];
+ const frames=[{transform:'none'}];
+ for(const [x,y] of sequence){
+  frames.push({transform:'translate('+(dx+x-24)+'px,'+(dy+y)+'px)'});
+  frames.push({transform:'translate('+(dx+x)+'px,'+(dy+y)+'px) scale(1.12,.91)'});
+ }
+ frames.push({transform:'none'});
+ await Promise.all([
+  actor.animate(frames,{duration:570}).finished,
+  target.animate([{opacity:1},{opacity:1},{opacity:.42},{opacity:1},{opacity:.42},{opacity:1}],{duration:520,delay:70}).finished
+ ]);
+}
+let autoTimer;
+function scheduleAutoBattle(){
+ clearTimeout(autoTimer);
+ autoTimer=setTimeout(()=>{
+  const b=state?.battle;
+  if(!b||b.done)return;
+  if(busy){scheduleAutoBattle();return}
+  const actor=b.allies[b.actor];
+  const id=b.foes.findIndex(unit=>unit.hp>0);
+  if(id<0)return;
+  const endangered=actor.hp<=Math.ceil(actor.max/4)&&b.foes[id].hp>15;
+  const action=b.ki>=2?'skill':endangered&&b.ki===0?'charge':'hit';
+  act(action,{id}).finally(()=>{
+   if(state.battle===b&&!b.done)scheduleAutoBattle();
+  });
+ },850);
+}
+function render(){
+ const {player:p,fighters,online,battle:b}=state;
+ el('name').hidden=true;el('name').required=false;
+ document.body.classList.toggle('in-world',Boolean(p.avatar));el('game').hidden=!p.avatar;el('login').hidden=Boolean(p.avatar);
+ if(!p.avatar)return;el('online').textContent='В сети · '+online.length;
+ el('players').textContent=online.join(' · ');const art=sprite(p.avatar.race,p.avatar.gender);
+ el('village-avatar').innerHTML=art;
+ const hud=el('village-hud');hud.innerHTML=art;
+ const panel=document.createElement('div');panel.className='profile-readout';
+ panel.innerHTML='<div class="profile-top"><strong></strong><span></span></div><div class="profile-vitality"><span>Выносл.</span><div class="profile-meter"><progress aria-label="Выносливость"></progress><span></span></div></div><div class="profile-bp"><span>Всего BP</span><strong></strong></div><small class="profile-money"></small>';
+ panel.querySelector('.profile-top strong').textContent='Ур. '+p.heroLevel;
+ panel.querySelector('.profile-top span').textContent=p.serverLabel+'.'+p.name;
+ const bar=panel.querySelector('progress');bar.max=p.maxVitality;bar.value=p.vitality;
+ panel.querySelector('.profile-meter span').textContent=p.vitality+'/'+p.maxVitality;
+ panel.querySelector('.profile-bp strong').textContent=p.power;
+ panel.querySelector('.profile-money').textContent='Дзени '+p.coins+' · Серебро '+(p.silver??0);
+ hud.append(panel);
+ drawFormation(p,fighters);
+ el('stats').replaceChildren();
+ el('stats').insertAdjacentHTML('afterbegin',art);
+ el('stats').append(document.createTextNode(p.name+' · '+races[p.avatar.race][0]+' · Ур. '+p.heroLevel+' · Всего BP '+p.power+' · Серебро '+(p.silver??0)+' · Дзени '+p.coins));
+ const arena=el('arena');arena.replaceChildren();
+ const field=document.createElement('div');field.className='field'+(b?.chapter==='bulma'?' valley':'');
+ field.innerHTML='<div class="palm" aria-hidden="true">🌴</div><div class="island"><div class="house">KAME HOUSE</div></div><div class="palm right" aria-hidden="true">🌴</div>';
+ const badge=document.createElement('div');badge.className='round';badge.textContent=b?'Раунд '+Math.min(b.turn+1,20)+' / 20':'Арена · Дом Камэ';field.append(badge);
+ const formations=document.createElement('div');formations.className='formations';field.append(formations);arena.append(field);
+ const active=b&&!b.done;
+ const inVillage=!b||(b.done&&(!b.reward||rewardClosed===p.wins));
+ el('village').hidden=!inVillage;
+ arena.parentElement.hidden=inVillage;
+ el('quest-name').textContent=p.wins===0?'Первый квест · Испытание на пляже':'Следующий квест · Тренировка на пляже';
+ const quest=el('quest-start');
+ const questAction=p.quest==='ready'?'turnin':p.quest==='accepted'?'start':'accept';
+ quest.textContent={accept:'Принять квест',start:'Начать тренировку',turnin:'Сдать квест'}[questAction];
+ quest.onclick=()=>questAction==='start'?(p.turtleReturned&&!p.bulmaJoined?openMap():act('start')):openJournal(questAction);
+ el('quest-name').textContent=!p.turtleReturned?'Вернуть морскую черепаху':p.bulmaJoined?'Тренировка школы Черепахи':'Дело в долине · Бульма';
+ if(active&&!b.foes[target]?.hp)target=b.foes.findIndex(unit=>unit.hp>0);
+ function squad(units,enemy){
+  const group=document.createElement('div');group.className='squad';
+  units.forEach((unit,i)=>{
+   const selectable=enemy&&active&&unit.hp>0;
+   const card=document.createElement(selectable?'button':'div');card.className='unit'+(!unit.hp?' out':'')+((enemy?active&&i===target:active&&i===b.actor)?' selected':'');
+   card.dataset.unit=String(i);card.dataset.side=enemy?'enemy':'ally';
+   const icon=document.createElement('span');icon.className='battle-sprite';icon.setAttribute('aria-hidden','true');
+   const forms={Гоку:['saiyan','male'],Криллин:['earth','male'],Пикколо:['majin','male'],Гохан:['saiyan','male'],Вегета:['saiyan','male'],Транкс:['earth','male'],Ямча:['earth','male'],Радиц:['saiyan','male'],Наппа:['saiyan','male'],Фриза:['frieza','male'],Селл:['frieza','male']};
+   const form=unit.hero?[p.avatar.race,p.avatar.gender]:forms[unit.name];
+   if(form)icon.innerHTML=sprite(...form);
+   else if(unit.name==='Обезьяна')icon.textContent='🐒';
+   else if(unit.name!=='Бульма')icon.innerHTML=sprite('earth','male');
+   const bar=document.createElement('progress');bar.max=unit.max;bar.value=unit.hp;bar.setAttribute('aria-label',unit.name+' · '+unit.hp+'/'+unit.max);
+   if(!unit.hero&&unit.name==='Бульма'){icon.classList.add('bulma-portrait');icon.replaceChildren()}
+   if(!unit.hero&&(unit.name==='Гоку'||unit.name==='Вегета')){
+    icon.classList.add('classic-fighter',unit.name==='Гоку'?'goku':'vegeta');icon.replaceChildren();
+   }
+   const label=document.createElement('span');label.textContent=unit.hero?p.name:unit.name;card.append(icon,label,bar);
+   if(selectable){card.setAttribute('aria-pressed',String(i===target));card.onclick=()=>{target=i;render()}}
+   group.append(card);
+  });formations.append(group);
+ }
+ squad(b?.allies??p.team.map(id=>({name:fighters[id].name,hp:1,max:1})),false);squad(b?.foes??[],true);
+ const controls=document.createElement('div');controls.className='battle-controls';arena.append(controls);
+ if(b){const msg=document.createElement('p');msg.textContent=b.log;controls.append(msg)}
+ if(!active)button(controls,'Начать бой','start');
+ else{
+  const note=document.createElement('p');
+  note.textContent='Автобой · '+(b.allies[b.actor].hero?p.name:b.allies[b.actor].name)+' · Ки '+b.ki+'/3';
+  controls.append(note);scheduleAutoBattle();
+ }
+
+ const roster=el('roster');roster.replaceChildren();
+ fighters.forEach((f,i)=>{const row=document.createElement('div');row.className='fighter';const label=document.createElement('span');const xp=p.xp[i]??0;
+ label.textContent=f.name+' · '+f.skill+(p.owned.includes(i)?' · Ур. '+(1+Math.floor(xp/100))+' · '+(xp%100)+'/100 опыта':'');row.append(label);
+ if(p.owned.includes(i))button(row,p.team.includes(i)?'В отряде':'Взять','team',{id:i},Boolean(b&&!b.done));
+ else{const s=document.createElement('small');s.textContent='Закрыт';row.append(s)}roster.append(row)});
+ el('summon').disabled=p.coins<100||p.owned.length===fighters.length; renderReward(b); el('gear-open').hidden=false; if(el('gear').open&&el('gear-load').hidden)renderGear();
+}
+function gearRow(parent,text){
+ const row=document.createElement('div');row.className='db-box';row.textContent=text;parent.append(row);return row;
+}
+function drawFormation(p,fighters){
+ const field=el('formation-field');field.replaceChildren();
+ const title=document.createElement('strong');title.textContent='Боевая мощь '+p.power+' · '+p.team.length+'/3';field.append(title);
+ const positions=[[44,36],[65,36],[34,56],[55,56],[77,56],[23,77],[44,77]];
+ positions.forEach(([x,y],i)=>{
+  const id=i===3?p.team[0]:i===4?p.team[1]:i===2?p.team[2]:undefined;
+  const pad=document.createElement('div');pad.className='formation-pad'+(id===undefined?' empty':'');
+  pad.style.cssText='left:'+x+'%;top:'+y+'%;background:'+['#5bb9ec','#e2ba3c','#5bb9ec','#ffe058','#ec743f','#5bb9ec','#e2ba3c'][i];
+  pad.textContent=id===undefined?'◇':fighters[id].name;
+  field.append(pad);
+ });
+}
+el('team-open').onclick=()=>{
+ el('formation-roster').append(el('roster'),el('summon'));
+ el('formation').showModal();
+};
+el('bag-open').onclick=()=>el('gear-open').click();
+el('village-map').onclick=openMap;
+function openMap(){
+ const map=el('map-dialog'),body=el('map-body');el('map-title').textContent='Карта мира';
+ body.replaceChildren();const world=document.createElement('div');world.className='world-art';
+ const region=document.createElement('button');region.textContent='Приключение Dragon Ball';world.append(region);body.append(world);
+ region.onclick=()=>{
+  el('map-title').textContent='Выбор этапа';body.replaceChildren();
+  const stages=document.createElement('div');stages.className='chapter-cards';body.append(stages);
+  gearRow(stages,'Глава 1 · Возвращение черепахи · завершено');
+  const stage=document.createElement('button');stage.className='current-chapter';stage.textContent='Текущий этап · Глава 2 · Дело в долине';stages.append(stage);
+  stage.disabled=!state.player.turtleReturned||state.player.bulmaJoined||state.player.quest!=='accepted';
+  stage.onclick=()=>{map.close();playScene()};
+  gearRow(stages,'Глава 3 · закрыта');
+ };
+ map.showModal();
+}
+function playScene(){
+ const p=state.player,{race,gender}=p.avatar;
+ const tone={earth:'Начнём с разминки.',saiyan:'Наконец-то достойная тренировка!',majin:'У меня тоже есть пара трюков!',frieza:'В моей школе ценят точность.'};
+ const lines=[
+  ['Мутэн Роши','Бульма! Ты как раз вовремя. Мой ученик хочет испытать твою новую капсулу.','roshi'],
+  ['Бульма','Согласна на тренировочный бой. Только берегитесь моего капсульного залпа!','bulma'],
+  [p.name,(gender==='female'?'Я готова! ':'Я готов! ')+tone[race],'hero']
+ ];
+ let i=0;const dialog=el('scene-dialog'),next=el('scene-next'),art=el('scene-art');
+ function frame(){
+  const [speaker,line,kind]=lines[i];
+  el('scene-speaker').textContent=speaker;el('scene-line').textContent=line;
+  art.className=kind==='roshi'?'db-roshi':kind==='bulma'?'bulma-portrait':'';
+  art.innerHTML=kind==='hero'?sprite(race,gender):'';
+  next.textContent=i===lines.length-1?'Начать бой':'Далее';
+ }
+ next.onclick=()=>{i++;if(i===lines.length){dialog.close();act('start')}else frame()};
+ frame();dialog.showModal();
+}
+function openJournal(action){
+ const first=!state.player.turtleReturned,bulma=!first&&!state.player.bulmaJoined,done=action==='turnin',accepted=action==='continue';
+ const dialog=el('journal');
+ el('journal-title').textContent=first?'Вернуть морскую черепаху':bulma?'Украсть бикини':'Тренировка школы Черепахи';
+ el('journal-text').textContent=first?(done?'Спасибо, что вернул мою черепаху! Возьми снаряжение ученика.':'Пройди испытание на пляже и приведи мою черепаху домой.') :bulma?(done?'Бульма приняла вызов команды и готова отправиться с тобой.':'Дело касается Бульмы и её бикини. Найди её в долине и договорись о тренировочном поединке.'):(done?'Отличная тренировка!':'На пляже уже ждут соперники.');
+ el('journal-pay').textContent=first?'100 серебра · 300 опыта · +32 BP':bulma?'100 серебра · 280 опыта · +32 BP · Бульма в коллекцию':'80 серебра · 250 опыта · +32 BP';
+ const loot=el('journal-loot');loot.replaceChildren();
+ if(first)for(const item of Object.values(state.equipment))gearRow(loot,item.icon+' '+item.name);
+ if(bulma){const recruit=gearRow(loot,'Бульма · новый боец');recruit.classList.add('recruit-preview')}
+ const confirm=el('journal-action');confirm.textContent=accepted?'Продолжить':done?'Сдать задание':'Принять задание';
+ confirm.onclick=()=>{dialog.close();if(accepted)openMap();else act(action)};dialog.showModal();
+}
+function renderGear(){
+ const p=state.player,items=state.equipment,locked=Boolean(state.battle&&!state.battle.done);
+ el('gear-avatar').innerHTML=sprite(p.avatar.race,p.avatar.gender);
+ el('gear-stats').textContent='Ранг '+p.rankLabel+' · '+p.power+' BP · Атака ки '+p.combatStats.attack+' · Защита '+p.combatStats.defense+' · Здоровье '+p.combatStats.hp;
+ const slots=el('gear-slots'),bag=el('gear-bag');slots.replaceChildren();bag.replaceChildren();
+ for(const [slot,label] of Object.entries({weapon:'Оружие',armor:'Броня',boots:'Обувь'})){
+  const item=items[p.equipped?.[slot]],row=gearRow(slots,label+' · '+(item?item.icon+' '+item.name:'пусто'));
+  if(item)button(row,'Снять','unequip',{id:slot},locked);
+ }
+ for(const [id,item] of Object.entries(items)){
+  if(!p.bag?.[id]||p.equipped?.[item.slot]===id)continue;
+  const row=gearRow(bag,item.icon+' '+item.name+' · '+item.stat+' +'+item.value+' · +'+item.bp+' BP');
+  button(row,'Надеть','equip',{id},locked);
+ }
+ if(!bag.childElementCount)bag.textContent='Нет свободного снаряжения.';
+}
+let gearLoad=0;
+el('gear-open').onclick=async()=>{
+ const version=++gearLoad,dialog=el('gear'),art=el('gear-image');
+ el('gear-status').textContent='';el('gear-load').hidden=false;el('gear-content').hidden=true;
+ art.src='/inventory-load.png';dialog.showModal();
+ await Promise.all([art.decode().catch(()=>{}),new Promise(resolve=>setTimeout(resolve,650))]);
+ if(dialog.open&&version===gearLoad){renderGear();el('gear-load').hidden=true;el('gear-content').hidden=false}
+};
+const races={earth:['Землянин','#efb68f','#168d88','#473046','M16 29V18Q35-2 54 18v10L39 18 26 28Z'],saiyan:['Саян','#dfa481','#32467c','#27243e','M15 29 9 12l13 5-4-13 16 11L43 3l2 14 13-7-5 19-14-9-13 10Z'],majin:['Маджин','#ee86b2','#f0e5ec','#ee86b2','M17 27Q9 5 32 5q19-4 24 13l-6 4Q45 10 36 18l-8 13Z'],frieza:['Раса Фризы','#d8e7fa','#eaf2fa','#944dcc','M16 27Q16 4 35 4t19 23L43 18H26Z']};
+function sprite(race,gender){
+ const col=Object.keys(races).indexOf(race);
+ return '<span aria-hidden="true" class="anime-hero" style="--hero-x:'+col/3*100+'%;--hero-y:'+(gender==='female'?100:0)+'%"></span>';
+}
+let selectedRace='saiyan',selectedGender='male';
+const raceDescriptions={earth:'Мастера боевых искусств Земли.',saiyan:'Прирождённые воины, сильные в ближнем бою.',majin:'Необычные бойцы с эластичным телом.',frieza:'Космические бойцы с мощными атаками ки.'};
+function drawCreator(){
+ el('race-title').textContent=races[selectedRace][0];
+ el('race-desc').textContent=raceDescriptions[selectedRace];
+ el('hero-preview').innerHTML=sprite(selectedRace,selectedGender);
+ for(const button of el('gender-select').children)button.setAttribute('aria-pressed',String(button.dataset.gender===selectedGender));
+ for(const button of el('avatars').children){
+  const race=button.dataset.race;
+  button.innerHTML=sprite(race,selectedGender)+'<strong>'+races[race][0]+'</strong>';
+  button.setAttribute('aria-pressed',String(race===selectedRace));
+ }
+}
+for(const race of Object.keys(races)){
+ const card=document.createElement('button');card.type='button';card.dataset.race=race;
+ card.onclick=()=>{selectedRace=race;drawCreator()};el('avatars').append(card);
+}
+for(const button of el('gender-select').children)button.onclick=()=>{selectedGender=button.dataset.gender;drawCreator()};
+drawCreator();
+el('login').onsubmit=e=>{
+ e.preventDefault();act(token?'avatar':'join',{name:el('name').value,race:selectedRace,gender:selectedGender});
+};
+el('summon').onclick=()=>act('summon');
+function meter(n,value){const m=document.querySelectorAll('.meter')[n];m.querySelector('i').style.width=value+'%';m.querySelector('span').textContent=value+'%'}
+async function boot(){
+ const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+ meter(0,0);
+ const art=el('splash-art');
+ await Promise.all([art.decode().catch(()=>{}),delay(450)]);
+ meter(0,70);
+ if(token)await act('state');
+ meter(0,100);
+ await delay(650);el('loading').hidden=true;
+}
+boot();setInterval(()=>{if(token&&(!state?.battle||state.battle.done)&&!el('reward-dialog').open&&!el('victory-dialog').open&&!el('journal').open&&!el('gear').open)act('state')},5000);
+</script></html>
+
+
+
+
+
+
+
+
